@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from center.serializer import UserSerializer
 from courses.models import *
-from .models import Davomat
+from .models import Davomat, Student2
 
 
 class Davomatserializer(serializers.ModelSerializer):
@@ -56,3 +56,8 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ['one_id', 'id', 'user', 'first_name', 'last_name', 'groups', 'classes', 'payments']
 
+
+class Student2Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student2
+        fields = ['name', 'phone', 'added', 'active']

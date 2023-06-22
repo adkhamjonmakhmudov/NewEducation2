@@ -64,18 +64,12 @@ class EmpType(models.Model):
 
 
 class Employee(models.Model):
-    role = models.ForeignKey('courses.EmpType', on_delete=models.SET_NULL, null=True, blank=True, to_field='role')
+    role = models.ForeignKey('courses.EmpType', on_delete=models.SET_NULL, null=True, blank=True)  # to_field='role'
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=15, unique=True, verbose_name="Teacher Phone Number",
                              help_text="Enter Teacher Phone Number", null=True, blank=True)
     course = models.ManyToManyField('courses.Course')
     added = models.DateTimeField()
-
-    def save(self, *args, **kwargs):
-        if isinstance(self.role, str):
-            role = EmpType.objects.get(role=self.role)
-            self.role_id = role.id  # Set the foreign key ID instead of the object
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.role} | {self.name} | {self.phone}'

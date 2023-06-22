@@ -19,6 +19,7 @@ router.register('davomat', DavomatViewset)
 router.register('payment', StudentPaymentViewset)
 router.register('output-payment', OutputPaymentViewset)
 router.register('classroom', ClassRoomViewset)
+router.register('studentuncommited', StudentUncommitedViewset)
 urlpatterns = [
     path('', include(router.urls)),
     path('info/<int:pk>/', StudentPaymentInfo.as_view()),

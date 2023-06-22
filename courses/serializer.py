@@ -36,18 +36,9 @@ class EmpTypeSerializer(serializers.ModelSerializer):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    role = serializers.CharField()
-
     class Meta:
         model = Employee
         fields = ['id', 'role', 'name', 'course', 'phone', 'added']
-
-    def create(self, validated_data):
-        role_name = validated_data.pop('role')
-        role = EmpType.objects.get(role=role_name)
-        validated_data['role'] = role
-        employee = Employee.objects.create(**validated_data)
-        return employee
 
 
 class GroupSerializer(serializers.ModelSerializer):

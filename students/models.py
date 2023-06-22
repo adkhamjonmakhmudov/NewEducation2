@@ -6,6 +6,15 @@ from django.db.models import ManyToManyField
 from center.models import User
 
 
+class Student2(models.Model):
+    name = models.CharField(max_length=40, verbose_name="Student Name", help_text="Enter Student Name", null=True,
+                            blank=True)
+    phone = models.CharField(max_length=15, unique=True, verbose_name="Student Phone Number",
+                             help_text="Enter Student Phone Number", null=True, blank=True)
+    added = models.DateTimeField(default=datetime.now())
+    active = models.BooleanField(default=True)
+
+
 class Student(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="User", help_text="Select User",
                              null=True, blank=True)

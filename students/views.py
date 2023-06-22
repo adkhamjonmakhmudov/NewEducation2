@@ -2,6 +2,7 @@ from django.core.files.storage import FileSystemStorage
 from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, pagination
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,6 +10,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from payment.models import StudentPayment
 from .filters import StudentFilter
+from .models import Student2
 from .serializer import *
 
 fs = FileSystemStorage(location='tmp/')
@@ -33,6 +35,14 @@ class StudentPagination(pagination.PageNumberPagination):
         })
 
 
+class StudentUncommitedViewset(ModelViewSet):
+    queryset = Student2.objects.all()
+    pagination_class = StudentPagination
+    serializer_class = Student2Serializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['name', 'phone']
+
+
 class StudentViewset(ModelViewSet):
     queryset = Student.objects.all()
     pagination_class = StudentPagination
@@ -45,21 +55,17 @@ class StudentViewset(ModelViewSet):
         data = request.data
         courses = data.get('add_to_course', [])
         groups = data.get('add_to_group', [])
-
         student = Student(name=data['name'], phone=data['phone'], user=request.user, added=data.get('added', None))
 
         with transaction.atomic():
             student.save()
-
             for course_id in courses:
                 try:
                     course = Course.objects.get(id=course_id)
                     student.add_to_course.add(course)
                 except ObjectDoesNotExist:
                     return Response(f"Course with ID {course_id} does not exist.", status=status.HTTP_400_BAD_REQUEST)
-
             student.add_to_group.set(groups)
-
         serializer = StudentSerializer(student)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
